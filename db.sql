@@ -3,9 +3,9 @@
 -- Based on CSV dataset analysis
 -- -----------------------------------------------------
 
-DROP SCHEMA IF EXISTS `goit-rdb-fp`;
-CREATE SCHEMA IF NOT EXISTS `goit-rdb-fp` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `goit-rdb-fp`;
+DROP SCHEMA IF EXISTS `pandemic`;
+CREATE SCHEMA IF NOT EXISTS `pandemic` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `pandemic`;
 
 -- -----------------------------------------------------
 -- Table `infectious_cases`
