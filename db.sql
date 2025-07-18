@@ -108,3 +108,21 @@ SELECT
   o.number_tuberculosis, o.number_smallpox, o.number_cholera_cases
 FROM infectious_cases_original o
 JOIN entities e ON o.entity = e.entity AND COALESCE(o.code, '') = COALESCE(e.code, '');
+
+-- -----------------------------------------------------
+-- Add Date Calculation Columns
+-- -----------------------------------------------------
+
+-- Add column for January 1st date
+ALTER TABLE infectious_cases
+ADD COLUMN year_start_date DATE NULL,
+ADD COLUMN today_date DATE NULL,
+ADD COLUMN years_difference INT NULL;
+
+SET @current_date = CURDATE();
+
+UPDATE infectious_cases 
+SET 
+    year_start_date = STR_TO_DATE(CONCAT(year, '-01-01'), '%Y-%m-%d'),
+    today_date = @current_date,
+    years_difference = YEAR(@current_date) - year;

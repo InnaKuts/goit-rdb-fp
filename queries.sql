@@ -24,3 +24,12 @@ WHERE ic.number_rabies IS NOT NULL
 GROUP BY e.entity, e.code
 ORDER BY avg_rabies DESC
 LIMIT 10; 
+
+-- 4. SQL-запит для перевірки дат
+SELECT
+    year,
+    year_start_date,
+    today_date,
+    years_difference
+FROM infectious_cases
+LIMIT 10;
