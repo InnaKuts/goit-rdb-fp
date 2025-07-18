@@ -8,7 +8,7 @@ CREATE SCHEMA IF NOT EXISTS `pandemic` DEFAULT CHARACTER SET utf8mb4 COLLATE utf
 USE `pandemic`;
 
 -- -----------------------------------------------------
--- Table `infectious_cases`
+-- Table `infectious_cases_original`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `infectious_cases_original`;
 CREATE TABLE IF NOT EXISTS `infectious_cases_original` (
@@ -25,8 +25,6 @@ CREATE TABLE IF NOT EXISTS `infectious_cases_original` (
   `number_smallpox` DECIMAL(12,2) NULL,
   `number_cholera_cases` DECIMAL(12,2) NULL
 );
-
-
 
 -- -----------------------------------------------------
 -- Load data from CSV file
@@ -53,3 +51,60 @@ SET
   `number_smallpox` = NULLIF(@number_smallpox, ''),
   `number_cholera_cases` = NULLIF(@number_cholera_cases, '');
 
+-- -----------------------------------------------------
+-- Normalized Tables
+-- -----------------------------------------------------
+
+-- Table `entities` - stores unique entity-code pairs
+DROP TABLE IF EXISTS `entities`;
+CREATE TABLE IF NOT EXISTS `entities` (
+  `entity_id` INT NOT NULL AUTO_INCREMENT,
+  `entity` VARCHAR(100) NOT NULL,
+  `code` VARCHAR(10) NULL,
+  PRIMARY KEY (`entity_id`),
+  UNIQUE KEY `uk_entity_code` (`entity`, `code`)
+);
+
+-- Table `infectious_cases` - normalized cases data
+DROP TABLE IF EXISTS `infectious_cases`;
+CREATE TABLE IF NOT EXISTS `infectious_cases` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `entity_id` INT NOT NULL,
+  `year` INT NOT NULL,
+  `number_yaws` DECIMAL(12,2) NULL,
+  `polio_cases` DECIMAL(12,2) NULL,
+  `cases_guinea_worm` DECIMAL(12,2) NULL,
+  `number_rabies` DECIMAL(12,2) NULL,
+  `number_malaria` DECIMAL(12,2) NULL,
+  `number_hiv` DECIMAL(12,2) NULL,
+  `number_tuberculosis` DECIMAL(12,2) NULL,
+  `number_smallpox` DECIMAL(12,2) NULL,
+  `number_cholera_cases` DECIMAL(12,2) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_entity_year` (`entity_id`, `year`),
+  FOREIGN KEY (`entity_id`) REFERENCES `entities` (`entity_id`)
+);
+
+-- -----------------------------------------------------
+-- Data Migration
+-- -----------------------------------------------------
+
+-- Populate entities table with unique entity-code pairs
+INSERT INTO entities (entity, code)
+SELECT DISTINCT entity, code 
+FROM infectious_cases_original;
+
+-- Migrate data to normalized infectious_cases table
+INSERT INTO infectious_cases (
+  entity_id, year, 
+  number_yaws, polio_cases, cases_guinea_worm,
+  number_rabies, number_malaria, number_hiv,
+  number_tuberculosis, number_smallpox, number_cholera_cases
+)
+SELECT 
+  e.entity_id, o.year,
+  o.number_yaws, o.polio_cases, o.cases_guinea_worm,
+  o.number_rabies, o.number_malaria, o.number_hiv,
+  o.number_tuberculosis, o.number_smallpox, o.number_cholera_cases
+FROM infectious_cases_original o
+JOIN entities e ON o.entity = e.entity AND COALESCE(o.code, '') = COALESCE(e.code, '');
