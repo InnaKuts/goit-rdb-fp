@@ -1,7 +1,3 @@
--- -----------------------------------------------------
--- Database Analysis Queries for Infectious Diseases Data
--- -----------------------------------------------------
-
 -- 1. SQL-запит для перевірки кількості завантажених записів
 SELECT COUNT(*) AS total_records
 FROM infectious_cases_original;
@@ -33,3 +29,6 @@ SELECT
     years_difference
 FROM infectious_cases
 LIMIT 10;
+
+-- 5. SQL-запит для перевірки функції calculate_years_difference
+SELECT calculate_years_difference(1996) AS years_from_1996;

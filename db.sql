@@ -125,4 +125,21 @@ UPDATE infectious_cases
 SET 
     year_start_date = STR_TO_DATE(CONCAT(year, '-01-01'), '%Y-%m-%d'),
     today_date = @current_date,
-    years_difference = YEAR(@current_date) - year;
+    years_difference = TIMESTAMPDIFF(YEAR, year_start_date, @current_date);
+
+-- -----------------------------------------------------
+-- Create Function for Year Difference Calculation
+-- -----------------------------------------------------
+
+DELIMITER //
+
+CREATE FUNCTION calculate_years_difference(input_year INT) 
+RETURNS INT
+NO SQL
+BEGIN
+    DECLARE input_date DATE;
+    SET input_date = STR_TO_DATE(CONCAT(input_year, '-01-01'), '%Y-%m-%d');
+    RETURN TIMESTAMPDIFF(YEAR, input_date, CURDATE());
+END //
+
+DELIMITER ;
