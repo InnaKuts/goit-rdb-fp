@@ -1,12 +1,14 @@
--- 1. SQL-запит для перевірки кількості завантажених записів
+USE `pandemic`;
+
+SELECT '1. SQL-запит для перевірки кількості завантажених записів' AS ' ';
 SELECT COUNT(*) AS total_records
 FROM infectious_cases_original;
 
--- 2. SQL-запит для перевірки кількості мігрованих записів
+SELECT '2. SQL-запит для перевірки кількості мігрованих записів' AS ' ';
 SELECT COUNT(*) AS total_records
 FROM infectious_cases;
 
--- 3. SQL-запит для аналізу Number_rabies за Entity/Code
+SELECT '3. SQL-запит для аналізу Number_rabies за Entity/Code' AS ' ';
 SELECT 
     e.entity,
     e.code,
@@ -21,7 +23,7 @@ GROUP BY e.entity, e.code
 ORDER BY avg_rabies DESC
 LIMIT 10; 
 
--- 4. SQL-запит для перевірки дат
+SELECT '4. SQL-запит для перевірки дат' AS ' ';
 SELECT
     year,
     year_start_date,
@@ -30,5 +32,5 @@ SELECT
 FROM infectious_cases
 LIMIT 10;
 
--- 5. SQL-запит для перевірки функції calculate_years_difference
+SELECT '5. SQL-запит для перевірки функції calculate_years_difference' AS ' ';
 SELECT calculate_years_difference(1996) AS years_from_1996;
